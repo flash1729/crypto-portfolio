@@ -90,7 +90,7 @@ struct PortfolioView: View {
                         // Currency toggle - matching the design exactly
                         HStack(spacing: 0) {
                             Button(action: {
-                                viewModel.toggleCurrency()
+                                viewModel.selectCurrency(.inr)
                             }) {
                                 Image("money")
                                     .resizable()
@@ -103,7 +103,7 @@ struct PortfolioView: View {
                             }
                             
                             Button(action: {
-                                viewModel.toggleCurrency()
+                                viewModel.selectCurrency(.btc)
                             }) {
                                 Text("₿")
                                     .font(.system(size: 14, weight: .medium))

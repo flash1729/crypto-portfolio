@@ -46,35 +46,35 @@ struct MaterialTabBar: View {
                             )
                         )
                 }
-                .frame(height: 200) // Your desired height
+                .frame(height: 200)
             }
-            .ignoresSafeArea(.all, edges: .bottom) // This makes it extend to actual bottom
+            .ignoresSafeArea(.all, edges: .bottom)
             .allowsHitTesting(false)
             
             // Tab bar content anchored to bottom
             VStack {
                 Spacer()
                 
-                HStack(spacing: localSelection == .exchange ? 0 : 16) {
-                    // Tab bar with glassmorphism - dynamic width
+                HStack(spacing: 8) { // Fixed 8px spacing between tab bar and plus button
+                    // Tab bar with glassmorphism - dynamic width based on plus button visibility
                     HStack(spacing: 0) {
                         ForEach(tabs, id: \.self) { tab in
                             tabView(tab: tab)
                         }
                     }
                     .padding(.horizontal, 4)
-                    .frame(maxWidth: .infinity)
+                    .frame(width: localSelection == .analytics ? 283 : 353, height: 63) // Dynamic width
                     .background(
-                        RoundedRectangle(cornerRadius: 32)
+                        RoundedRectangle(cornerRadius: 52) // Fixed corner radius
                             .fill(Color.black)
                     )
                     .padding(3)
                     .background(
-                        RoundedRectangle(cornerRadius: 32)
+                        RoundedRectangle(cornerRadius: 52) // Fixed corner radius
                             .fill(Color.black)
                     )
                     
-                    // Floating Plus Button - only show when not on Exchange tab
+                    // Floating Plus Button - only show when on Analytics tab
                     if localSelection == .analytics {
                         Button(action: {}) {
                             Image(systemName: "plus")
@@ -87,12 +87,11 @@ struct MaterialTabBar: View {
                         }
                     }
                 }
-//                .padding(.horizontal, 20)
+                .padding(.horizontal, 20) // Fixed 20px horizontal padding
                 .padding(.bottom, 32)
             }
             .ignoresSafeArea(.all, edges: .bottom)
         }
-        .padding(.horizontal, 20)
         .onAppear {
             localSelection = selection
         }
@@ -115,18 +114,18 @@ struct MaterialTabBar: View {
                 .font(.system(size: 10, weight: localSelection == tab ? .semibold : .medium))
                 .foregroundColor(localSelection == tab ? .white : .gray)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 14)
+        .frame(maxWidth: .infinity, maxHeight: .infinity) // Allow full height usage
         .background(
             ZStack {
                 if localSelection == tab {
-                    RoundedRectangle(cornerRadius: 28)
+                    RoundedRectangle(cornerRadius: 44) // Fixed corner radius for inner rects
                         .fill(Color.accentBlue)
+                        .frame(width: localSelection == .analytics ? 74 : 90, height: 55) // Dynamic width based on plus button
                         .matchedGeometryEffect(id: "tabHighlighting", in: namespace)
                 }
             }
         )
-        .contentShape(RoundedRectangle(cornerRadius: 28))
+        .contentShape(RoundedRectangle(cornerRadius: 44))
         .onTapGesture {
             selection = tab
         }

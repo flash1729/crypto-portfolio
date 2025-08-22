@@ -33,6 +33,10 @@ class PortfolioViewModel: ObservableObject {
         selectedCurrency = selectedCurrency == .inr ? .btc : .inr
     }
     
+    func selectCurrency(_ currency: CurrencyType) {
+        selectedCurrency = currency
+    }
+    
     func selectTimeframe(_ timeframe: ChartTimeframe) {
         selectedTimeframe = timeframe
     }
