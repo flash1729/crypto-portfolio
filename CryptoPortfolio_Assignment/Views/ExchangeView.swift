@@ -35,23 +35,11 @@ struct ExchangeView: View {
     }
     
     private var topNavigationSection: some View {
-        HStack {
-            Button(action: {}) {
-                Image(systemName: "line.horizontal.3")
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(.white)
-            }
-            
-            Spacer()
-            
-            Button(action: {}) {
-                Image(systemName: "bell")
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(.white)
-            }
-        }
-        .padding(.horizontal, 32)
-        .padding(.top, 54) // Same as PortfolioView - account for status bar
+        TopNavigationBar(
+            menuAction: {},
+            notificationAction: {}
+        )
+        .padding(.horizontal, 16) // Adjust positioning if needed
     }
     
     private var mainContentSection: some View {
@@ -73,14 +61,26 @@ struct ExchangeView: View {
                             .offset(y: 8) // Push it down slightly
                         
                         // First layer (top) - Background image
-                        Image("backgroundExchange")
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 395, height: 177)
-                            .rotationEffect(.degrees(90))
-                            .clipped()
-                            .clipShape(RoundedRectangle(cornerRadius: 24))
-                            .offset(y: 0)
+//                        Image("backgroundExchange")
+//                            .resizable()
+//                            .aspectRatio(contentMode: .fill)
+//                            .frame(width: 395, height: 177)
+//                            .rotationEffect(.degrees(90))
+//                            .clipped()
+//                            .clipShape(RoundedRectangle(cornerRadius: 24))
+//                            .offset(y: 0)
+                        LinearGradient(
+                            gradient: Gradient(stops: [
+                                .init(color: Color(red: 0.25, green: 0.25, blue: 0.8), location: 0),  // Lighter blue-purple at start
+                                .init(color: Color(red: 0.05, green: 0.05, blue: 0.25), location: 1)  // Darker navy blue at end
+                            ]),
+                            startPoint: .bottomLeading,
+                            endPoint: .topTrailing
+                        )
+                        .frame(width: 395, height: 177)
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: 24))
+                        .offset(y: 0)
                     }
                 }
                 
@@ -117,132 +117,25 @@ struct ExchangeView: View {
             // Action buttons with variable white borders
             HStack(spacing: 24) {
                 // Up arrow button - gradient border on left side
-                Button(action: {}) {
-                    Image(systemName: "arrow.up")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 52, height: 52)
-                        .background(
-                            Circle()
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(stops: [
-                                            .init(color: Color(red: 0.102, green: 0.098, blue: 0.106), location: 0),
-                                            .init(color: Color(red: 0.055, green: 0.055, blue: 0.063), location: 0.84)
-                                        ]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                        )
-                        .overlay(
-                            // Left side gradient border
-                            Circle()
-                                .stroke(
-                                    LinearGradient(
-                                        gradient: Gradient(stops: [
-                                            .init(color: Color.white, location: 0),
-                                            .init(color: Color(hex: "999999").opacity(0), location: 0.74)
-                                        ]),
-                                        startPoint: .init(x: -0.6, y: 0.2), // 133.73deg equivalent
-                                        endPoint: .init(x: 1.6, y: 0.8)
-                                    ),
-                                    lineWidth: 1
-                                )
-                                .mask(
-                                    // Mask to show only left portion
-                                    Circle()
-                                        .frame(width: 50, height: 52)
-                                        .offset(x: -11)
-                                )
-                        )
-                }
+                GradientActionButton(
+                    iconName: "arrow.up",
+                    action: {},
+                    gradientPosition: .left
+                )
                 
                 // Plus button - gradient border on top
-                Button(action: {
-                    showExchangeDetail = true
-                }) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 52, height: 52)
-                        .background(
-                            Circle()
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(stops: [
-                                            .init(color: Color(red: 0.102, green: 0.098, blue: 0.106), location: 0),
-                                            .init(color: Color(red: 0.055, green: 0.055, blue: 0.063), location: 0.84)
-                                        ]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                        )
-                        .overlay(
-                            // Top gradient border
-                            Circle()
-                                .stroke(
-                                    LinearGradient(
-                                        gradient: Gradient(stops: [
-                                            .init(color: Color.white, location: 0),
-                                            .init(color: Color(hex: "999999").opacity(0), location: 0.74)
-                                        ]),
-                                        startPoint: .init(x: -0.6, y: 0.2), // 133.73deg equivalent
-                                        endPoint: .init(x: 1.6, y: 0.8)
-                                    ),
-                                    lineWidth: 1
-                                )
-                                .mask(
-                                    // Mask to show only top portion
-                                    Circle()
-                                        .frame(width: 50, height: 50)
-                                        .offset(y: -11)
-                                )
-                        )
-                }
+                GradientActionButton(
+                    iconName: "plus",
+                    action: { showExchangeDetail = true },
+                    gradientPosition: .top
+                )
                 
                 // Down arrow button - gradient border on right side
-                Button(action: {}) {
-                    Image(systemName: "arrow.down")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 52, height: 52)
-                        .background(
-                            Circle()
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(stops: [
-                                            .init(color: Color(red: 0.102, green: 0.098, blue: 0.106), location: 0),
-                                            .init(color: Color(red: 0.055, green: 0.055, blue: 0.063), location: 0.84)
-                                        ]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                        )
-                        .overlay(
-                            // Right side gradient border
-                            Circle()
-                                .stroke(
-                                    LinearGradient(
-                                        gradient: Gradient(stops: [
-                                            .init(color: Color.white, location: 0),
-                                            .init(color: Color(hex: "999999").opacity(0), location: 0.74)
-                                        ]),
-                                        startPoint: .init(x: -0.6, y: 0.2), // 133.73deg equivalent
-                                        endPoint: .init(x: 1.6, y: 0.8)
-                                    ),
-                                    lineWidth: 1
-                                )
-                                .mask(
-                                    // Mask to show only right portion
-                                    Circle()
-                                        .frame(width: 55, height: 52)
-                                        .offset(x: 11)
-                                )
-                        )
-                }
+                GradientActionButton(
+                    iconName: "arrow.down",
+                    action: {},
+                    gradientPosition: .right
+                )
             }
             .padding(.top, 16)
             
@@ -253,118 +146,73 @@ struct ExchangeView: View {
     
     private var transactionsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Text("Transactions")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white.opacity(0.8))
-                
-                Spacer()
-                
-                Text("Last 4 days")
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.gray)
-            }
-            .padding(.horizontal, 16)
+            SectionHeader(
+                title: "Transactions",
+                subtitle: "Last 4 days"
+            )
             
             // Transaction list
             VStack(spacing: 8) {
                 // Receive transaction
-                transactionRow(
-                    icon: "arrow.down",
+                TransactionRowView(
+                    iconName: "arrow.down",
                     title: "Recieve",
                     date: "20 March",
                     currency: "BTC",
-                    amount: "+0.002126"
+                    amount: "+0.002126",
+                    backgroundColor: Color(red: 21/255, green: 21/255, blue: 21/255)
                 )
                 
                 // Sent transaction
-                transactionRow(
-                    icon: "arrow.up",
+                TransactionRowView(
+                    iconName: "arrow.up",
                     title: "Sent",
                     date: "19 March",
                     currency: "ETH",
-                    amount: "+0.003126"
+                    amount: "+0.003126",
+                    backgroundColor: Color(red: 21/255, green: 21/255, blue: 21/255)
                 )
                 
                 // Send transaction
-                transactionRow(
-                    icon: "arrow.up",
+                TransactionRowView(
+                    iconName: "arrow.up",
                     title: "Send",
                     date: "18 March",
                     currency: "LTC",
-                    amount: "+0.02126"
+                    amount: "+0.02126",
+                    backgroundColor: Color(red: 21/255, green: 21/255, blue: 21/255)
                 )
                 
                 // Additional dummy transactions
-                transactionRow(
-                    icon: "arrow.down",
+                TransactionRowView(
+                    iconName: "arrow.down",
                     title: "Receive",
                     date: "17 March",
                     currency: "ADA",
-                    amount: "+0.15432"
+                    amount: "+0.15432",
+                    backgroundColor: Color(red: 21/255, green: 21/255, blue: 21/255)
                 )
                 
-                transactionRow(
-                    icon: "arrow.up",
+                TransactionRowView(
+                    iconName: "arrow.up",
                     title: "Swap",
                     date: "16 March",
                     currency: "DOT",
-                    amount: "+0.08765"
+                    amount: "+0.08765",
+                    backgroundColor: Color(red: 21/255, green: 21/255, blue: 21/255)
                 )
                 
-                transactionRow(
-                    icon: "arrow.down",
+                TransactionRowView(
+                    iconName: "arrow.down",
                     title: "Buy",
                     date: "15 March",
                     currency: "SOL",
-                    amount: "+0.04321"
+                    amount: "+0.04321",
+                    backgroundColor: Color(red: 21/255, green: 21/255, blue: 21/255)
                 )
             }
         }
         .padding(.top, 16)
-    }
-    
-    private func transactionRow(icon: String, title: String, date: String, currency: String, amount: String) -> some View {
-        HStack(spacing: 12) {
-            // Icon
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.gray.opacity(0.3))
-                .frame(width: 44, height: 44)
-                .overlay(
-                    Image(systemName: icon)
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                )
-            
-            // Title and date
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white)
-                
-                Text(date)
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.gray)
-            }
-            
-            Spacer()
-            
-            // Currency and amount
-            VStack(alignment: .trailing, spacing: 2) {
-                Text(currency)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.white)
-                
-                Text(amount)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white)
-            }
-        }
-        .frame(width: 360, height: 84)
-        .padding(.horizontal, 16)
-        .background(Color(red: 21/255, green: 21/255, blue: 21/255, opacity: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .padding(.horizontal, 16)
     }
 }
 

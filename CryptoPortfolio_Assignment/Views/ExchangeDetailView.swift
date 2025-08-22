@@ -82,18 +82,9 @@ struct ExchangeDetailView: View {
     
     private var topNavigationBar: some View {
         HStack(spacing: 24) {
-            Button(action: {
+            BackButton(action: {
                 dismiss()
-            }) {
-                HStack {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 24, weight: .medium))
-                        .foregroundColor(.white)
-                }
-                .frame(width: 44, height: 44)
-                .background(Color.clear)
-                .clipShape(Circle())
-            }
+            })
             
             Text("Exchange")
                 .font(.custom("Geist Mono Variable", size: 16))
@@ -152,17 +143,12 @@ struct ExchangeDetailView: View {
     }
     
     private var exchangeButton: some View {
-        Button(action: {
-            // Perform exchange
-        }) {
-            Text("Exchange")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(Color(hex: "1E4DDB"))
-                .clipShape(RoundedRectangle(cornerRadius: 24))
-        }
+        PrimaryButton(
+            title: "Exchange",
+            action: {
+                // Perform exchange
+            }
+        )
         .padding(.horizontal, 18)
     }
     

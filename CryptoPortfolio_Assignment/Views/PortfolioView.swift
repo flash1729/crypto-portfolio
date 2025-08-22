@@ -52,23 +52,11 @@ struct PortfolioView: View {
             // All content overlaid on the background image
             VStack(spacing: 0) {
                 // Top navigation - positioned on the gradient background
-                HStack {
-                    Button(action: {}) {
-                        Image(systemName: "line.horizontal.3")
-                            .font(.system(size: 24, weight: .medium))
-                            .foregroundColor(.white)
-                    }
-                    
-                    Spacer()
-                    
-                    Button(action: {}) {
-                        Image(systemName: "bell")
-                            .font(.system(size: 24, weight: .medium))
-                            .foregroundColor(.white)
-                    }
-                }
-                .padding(.horizontal, 16) // Increased horizontal padding to match design
-                .padding(.top, 54) // Account for status bar
+                TopNavigationBar(
+                    menuAction: {},
+                    notificationAction: {}
+                )
+                .padding(.horizontal, 0) // Remove extra padding since TopNavigationBar handles it
                 
                 Spacer()
                 
@@ -88,33 +76,12 @@ struct PortfolioView: View {
                         Spacer()
                         
                         // Currency toggle - matching the design exactly
-                        HStack(spacing: 0) {
-                            Button(action: {
-                                viewModel.selectCurrency(.inr)
-                            }) {
-                                Image("money")
-                                    .resizable()
-                                    .frame(width: 18, height: 18) // Image frame
-                                    .frame(width: 50, height: 38) // Expand to full frame
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .fill(viewModel.selectedCurrency == .inr ? Color.black : Color.clear)
-                                    )
-                            }
-                            
-                            Button(action: {
-                                viewModel.selectCurrency(.btc)
-                            }) {
-                                Text("₿")
-                                    .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(viewModel.selectedCurrency == .btc ? .white : .white.opacity(0.7))
-                                    .frame(width: 50, height: 38) // Fixed size for consistency
-                                    .background(viewModel.selectedCurrency == .btc ? Color.black : Color.clear)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                            }
-                        }
-                        .background(Color.white.opacity(0.15))
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        CurrencyToggleView(
+                            selectedCurrency: $viewModel.selectedCurrency,
+                            onINRSelected: { viewModel.selectCurrency(.inr) },
+                            onBTCSelected: { viewModel.selectCurrency(.btc) },
+                            style: .whiteBackground
+                        )
                     }
                     
                     HStack {
@@ -164,150 +131,27 @@ struct PortfolioView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 24) { // 24px gap as specified
                 // Bitcoin card
-                VStack(alignment: .leading, spacing: 24) { // 24px gap between elements
-                    HStack(spacing: 12) {
-                        Image("btcVec")
-                            .resizable()
-                            .frame(width: 42, height: 42)
-                            
-                        
-                        Text("Bitcoin (BTC)")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white)
-                        
-                        Spacer()
-                    }
-                    
-                    // Price and percentage on same line
-                    HStack {
-                        Text("₹ 75,62,502.14")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
-                        
-                        Spacer()
-                        
-                        Text("+3.2%")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.green)
-                    }
-                }
-                .padding(16) // 16px padding as specified
-                .frame(width: 204, height: 118) // Exact dimensions from Figma
-                .background(Color(hex: "0D0C0D")) // Background color from Figma
-                .clipShape(RoundedRectangle(cornerRadius: 12)) // 12px radius
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color(hex: "151517"),
-                                    Color(hex: "2B2B2B"),
-                                    Color(hex: "151517")
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 2 // 2px border
-                        )
+                CryptoAssetCard(
+                    imageName: "btcVec",
+                    title: "Bitcoin (BTC)",
+                    price: "₹ 75,62,502.14",
+                    changePercentage: "+3.2%"
                 )
                 
                 // Ethereum card
-                VStack(alignment: .leading, spacing: 24) { // 24px gap between elements
-                    HStack(spacing: 12) {
-                        Image("ether")
-                            .resizable()
-                            .frame(width: 42, height: 42)
-                        
-                        Text("Ether (ETH)")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white)
-                        
-                        Spacer()
-                    }
-                    
-                    // Price and percentage on same line
-                    HStack {
-                        Text("₹ 1,79,102.50")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
-                        
-                        Spacer()
-                        
-                        Text("+3.2%")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.green)
-                    }
-                }
-                .padding(16) // 16px padding as specified
-                .frame(width: 204, height: 118) // Exact dimensions from Figma
-                .background(Color(hex: "0D0C0D")) // Background color from Figma
-                .clipShape(RoundedRectangle(cornerRadius: 12)) // 12px radius
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color(hex: "151517"),
-                                    Color(hex: "2B2B2B"),
-                                    Color(hex: "151517")
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 2 // 1px border
-                        )
+                CryptoAssetCard(
+                    imageName: "ether",
+                    title: "Ether (ETH)",
+                    price: "₹ 1,79,102.50",
+                    changePercentage: "+3.2%"
                 )
                 
                 // Cardano card
-                VStack(alignment: .leading, spacing: 24) { // 24px gap between elements
-                    HStack(spacing: 12) {
-                        Circle()
-                            .fill(.purple)
-                            .frame(width: 42, height: 42)
-                            .overlay(
-                                Text("₳")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(.white)
-                            )
-                        
-                        Text("Cardano (ADA)")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white)
-                        
-                        Spacer()
-                    }
-                    
-                    // Price and percentage on same line
-                    HStack {
-                        Text("₹ 45,234.67")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
-                        
-                        Spacer()
-                        
-                        Text("+1.8%")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.green)
-                    }
-                }
-                .padding(16) // 16px padding as specified
-                .frame(width: 204, height: 118) // Exact dimensions from Figma
-                .background(Color(hex: "0D0C0D")) // Background color from Figma
-                .clipShape(RoundedRectangle(cornerRadius: 12)) // 12px radius
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color(hex: "151517"),
-                                    Color(hex: "2B2B2B"),
-                                    Color(hex: "151517")
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 2 // 2px border
-                        )
+                CryptoAssetCard(
+                    imageName: nil,
+                    title: "Cardano (ADA)",
+                    price: "₹ 45,234.67",
+                    changePercentage: "+1.8%"
                 )
             }
             .padding(.horizontal, 16)
@@ -317,81 +161,30 @@ struct PortfolioView: View {
     
     private var recentTransactionsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Text("Recent Transactions")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white.opacity(0.8))
-                
-                Spacer()
-            }
-            .padding(.horizontal, 16)
+            SectionHeader(title: "Recent Transactions")
             
             // First transaction row - Bitcoin Receive
-            HStack(spacing: 12) {
-                Image("btcVec")
-                    .resizable()
-                    .frame(width: 48, height: 48)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Recieve")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.white)
-                    
-                    Text("20 March")
-                        .font(.system(size: 12, weight: .regular))
-                        .foregroundColor(.gray)
-                }
-                
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("BTC")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.white)
-                    
-                    Text("+0.002126")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.white)
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(Color.gray.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            TransactionRowView(
+                iconName: nil,
+                imageName: "btcVec",
+                title: "Recieve",
+                date: "20 March",
+                currency: "BTC",
+                amount: "+0.002126",
+                useSystemIcon: false
+            )
             .padding(.horizontal, 16)
             
             // Second transaction row - Exchange
-            HStack(spacing: 12) {
-                Image("ether")
-                    .resizable()
-                    .frame(width: 48, height: 48)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Recieve")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.white)
-                    
-                    Text("20 March")
-                        .font(.system(size: 12, weight: .regular))
-                        .foregroundColor(.gray)
-                }
-                
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("BTC")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.white)
-                    
-                    Text("+0.002126")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.white)
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(Color.gray.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            TransactionRowView(
+                iconName: nil,
+                imageName: "ether",
+                title: "Recieve",
+                date: "20 March",
+                currency: "BTC",
+                amount: "+0.002126",
+                useSystemIcon: false
+            )
             .padding(.horizontal, 16)
         }
         .padding(.top, 32)
