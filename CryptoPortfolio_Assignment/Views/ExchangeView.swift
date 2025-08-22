@@ -63,20 +63,20 @@ struct ExchangeView: View {
                         // Third layer (bottom) - #111768
                         RoundedRectangle(cornerRadius: 24)
                             .fill(Color(hex: "111768"))
-                            .frame(width: 325, height: 177)
-                            .offset(y: 15) // Push it down
+                            .frame(width: 345, height: 177)
+                            .offset(y: 16) // Push it down
                         
                         // Second layer (middle) - #2A1F7F
                         RoundedRectangle(cornerRadius: 24)
                             .fill(Color(hex: "2A1F7F"))
-                            .frame(width: 345, height: 177)
-                            .offset(y: 7) // Push it down slightly
+                            .frame(width: 375, height: 177)
+                            .offset(y: 8) // Push it down slightly
                         
                         // First layer (top) - Background image
                         Image("backgroundExchange")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: 361, height: 177)
+                            .frame(width: 395, height: 177)
                             .rotationEffect(.degrees(90))
                             .clipped()
                             .clipShape(RoundedRectangle(cornerRadius: 24))
@@ -267,7 +267,7 @@ struct ExchangeView: View {
             .padding(.horizontal, 16)
             
             // Transaction list
-            VStack(spacing: 0) {
+            VStack(spacing: 8) {
                 // Receive transaction
                 transactionRow(
                     icon: "arrow.down",
@@ -362,8 +362,7 @@ struct ExchangeView: View {
         }
         .frame(width: 360, height: 84)
         .padding(.horizontal, 16)
-//        .padding(.vertical, 12)
-        .background(Color.black.opacity(0.5))
+        .background(Color(red: 21/255, green: 21/255, blue: 21/255, opacity: 1))
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .padding(.horizontal, 16)
     }

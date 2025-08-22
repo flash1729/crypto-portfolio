@@ -25,7 +25,7 @@ struct MaterialTabBar: View {
                         .fill(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color.accentBlue.opacity(0),
+                                    Color.white.opacity(0),
                                     Color.accentBlue.opacity(0.25)
                                 ]),
                                 startPoint: .top,

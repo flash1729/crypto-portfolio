@@ -244,6 +244,11 @@ struct ChartView: View {
     }
     
     private func selectedPointIndicator(at index: Int, in geometry: GeometryProxy) -> some View {
+        // Safely check if index is within bounds
+        guard index >= 0 && index < data.count else {
+            return AnyView(EmptyView())
+        }
+        
         let width = geometry.size.width
         let height = geometry.size.height
         let stepX = width / CGFloat(data.count - 1)
@@ -252,42 +257,47 @@ struct ChartView: View {
         let minValue = data.map(\.value).min() ?? 0
         let maxValue = data.map(\.value).max() ?? 1
         let valueRange = maxValue - minValue
-        let normalizedValue = (data[index].value - minValue) / valueRange
+        
+        // Safely access the data point
+        let dataPoint = data[index]
+        let normalizedValue = valueRange > 0 ? (dataPoint.value - minValue) / valueRange : 0
         let y = height - (normalizedValue * height)
         
-        return ZStack {
-            // Vertical line
-            Rectangle()
-                .fill(Color.white)
-                .frame(width: 1)
-                .position(x: x, y: height / 2)
-            
-            // Point circle
-            Circle()
-                .fill(Color.white)
-                .frame(width: 8, height: 8)
-                .overlay(
-                    Circle()
-                        .stroke(Color.white, lineWidth: 2)
-                        .frame(width: 16, height: 16)
-                )
-                .position(x: x, y: y)
-            
-            // Value label
-            VStack(spacing: 4) {
-                Text(data[index].dateString)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.gray)
+        return AnyView(
+            ZStack {
+                // Vertical line
+                Rectangle()
+                    .fill(Color.white)
+                    .frame(width: 1)
+                    .position(x: x, y: height / 2)
                 
-                Text(formatValue(data[index].value))
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white)
+                // Point circle
+                Circle()
+                    .fill(Color.white)
+                    .frame(width: 8, height: 8)
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white, lineWidth: 2)
+                            .frame(width: 16, height: 16)
+                    )
+                    .position(x: x, y: y)
+                
+                // Value label
+                VStack(spacing: 4) {
+                    Text(dataPoint.dateString)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.gray)
+                    
+                    Text(formatValue(dataPoint.value))
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.white)
+                }
+                .position(
+                    x: x > 100 ? x - 60 : x + 60,
+                    y: 20
+                )
             }
-            .position(
-                x: x > 100 ? x - 60 : x + 60,
-                y: 20
-            )
-        }
+        )
     }
     
     private func dragOverlay(in geometry: GeometryProxy) -> some View {

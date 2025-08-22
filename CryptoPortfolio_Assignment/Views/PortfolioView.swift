@@ -36,7 +36,6 @@ struct PortfolioView: View {
             .ignoresSafeArea(edges: .top)
             .scrollIndicators(.hidden)
         }
-
     }
     
     private var headerSection: some View {
