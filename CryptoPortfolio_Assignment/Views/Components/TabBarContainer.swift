@@ -29,6 +29,7 @@ struct TabBarContainer<Content: View>: View {
                 selection: $selection,
                 localSelection: selection
             )
+//            .padding(.horizontal, 20)
         }
         .onPreferenceChange(TabBarItemPreferenceKey.self) { value in
             self.tabs = value

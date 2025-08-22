@@ -90,16 +90,70 @@ struct ChartView: View {
             let maxValue = data.map(\.value).max() ?? 1
             let valueRange = maxValue - minValue
             
+            // Convert data points to CGPoints
+            var points: [CGPoint] = []
             for (index, point) in data.enumerated() {
                 let x = CGFloat(index) * stepX
                 let normalizedValue = (point.value - minValue) / valueRange
                 let y = height - (normalizedValue * height)
+                points.append(CGPoint(x: x, y: y))
+            }
+            
+            guard points.count > 1 else { return }
+            
+            // Start at first point
+            path.move(to: points[0])
+            
+            // Create smooth curves between points
+            for i in 1..<points.count {
+                let currentPoint = points[i]
+                let previousPoint = points[i - 1]
                 
-                if index == 0 {
-                    path.move(to: CGPoint(x: x, y: y))
+                // Calculate control points for smooth curve
+                let controlPoint1: CGPoint
+                let controlPoint2: CGPoint
+                
+                if i == 1 {
+                    // First curve
+                    controlPoint1 = CGPoint(
+                        x: previousPoint.x + (currentPoint.x - previousPoint.x) * 0.3,
+                        y: previousPoint.y
+                    )
+                    controlPoint2 = CGPoint(
+                        x: currentPoint.x - (currentPoint.x - previousPoint.x) * 0.3,
+                        y: currentPoint.y
+                    )
+                } else if i == points.count - 1 {
+                    // Last curve
+                    controlPoint1 = CGPoint(
+                        x: previousPoint.x + (currentPoint.x - previousPoint.x) * 0.3,
+                        y: previousPoint.y
+                    )
+                    controlPoint2 = CGPoint(
+                        x: currentPoint.x - (currentPoint.x - previousPoint.x) * 0.3,
+                        y: currentPoint.y
+                    )
                 } else {
-                    path.addLine(to: CGPoint(x: x, y: y))
+                    // Middle curves - use neighboring points for smoother transitions
+                    let nextPoint = points[i + 1]
+                    let prevPrevPoint = points[i - 2]
+                    
+                    controlPoint1 = CGPoint(
+                        x: previousPoint.x + (currentPoint.x - prevPrevPoint.x) * 0.15,
+                        y: previousPoint.y + (currentPoint.y - prevPrevPoint.y) * 0.15
+                    )
+                    controlPoint2 = CGPoint(
+                        x: currentPoint.x - (nextPoint.x - previousPoint.x) * 0.15,
+                        y: currentPoint.y - (nextPoint.y - previousPoint.y) * 0.15
+                    )
                 }
+                
+                // Add cubic curve
+                path.addCurve(
+                    to: currentPoint,
+                    control1: controlPoint1,
+                    control2: controlPoint2
+                )
             }
         }
     }
@@ -114,20 +168,73 @@ struct ChartView: View {
             let maxValue = data.map(\.value).max() ?? 1
             let valueRange = maxValue - minValue
             
-            // Start from bottom left
-            path.move(to: CGPoint(x: 0, y: height))
-            
-            // Draw the line
+            // Convert data points to CGPoints
+            var points: [CGPoint] = []
             for (index, point) in data.enumerated() {
                 let x = CGFloat(index) * stepX
                 let normalizedValue = (point.value - minValue) / valueRange
                 let y = height - (normalizedValue * height)
+                points.append(CGPoint(x: x, y: y))
+            }
+            
+            guard points.count > 1 else { return }
+            
+            // Start from bottom left
+            path.move(to: CGPoint(x: 0, y: height))
+            
+            // Move to first point
+            path.addLine(to: points[0])
+            
+            // Create smooth curves between points (same logic as linePath)
+            for i in 1..<points.count {
+                let currentPoint = points[i]
+                let previousPoint = points[i - 1]
                 
-                if index == 0 {
-                    path.addLine(to: CGPoint(x: x, y: y))
+                // Calculate control points for smooth curve
+                let controlPoint1: CGPoint
+                let controlPoint2: CGPoint
+                
+                if i == 1 {
+                    // First curve
+                    controlPoint1 = CGPoint(
+                        x: previousPoint.x + (currentPoint.x - previousPoint.x) * 0.3,
+                        y: previousPoint.y
+                    )
+                    controlPoint2 = CGPoint(
+                        x: currentPoint.x - (currentPoint.x - previousPoint.x) * 0.3,
+                        y: currentPoint.y
+                    )
+                } else if i == points.count - 1 {
+                    // Last curve
+                    controlPoint1 = CGPoint(
+                        x: previousPoint.x + (currentPoint.x - previousPoint.x) * 0.3,
+                        y: previousPoint.y
+                    )
+                    controlPoint2 = CGPoint(
+                        x: currentPoint.x - (currentPoint.x - previousPoint.x) * 0.3,
+                        y: currentPoint.y
+                    )
                 } else {
-                    path.addLine(to: CGPoint(x: x, y: y))
+                    // Middle curves - use neighboring points for smoother transitions
+                    let nextPoint = points[i + 1]
+                    let prevPrevPoint = points[i - 2]
+                    
+                    controlPoint1 = CGPoint(
+                        x: previousPoint.x + (currentPoint.x - prevPrevPoint.x) * 0.15,
+                        y: previousPoint.y + (currentPoint.y - prevPrevPoint.y) * 0.15
+                    )
+                    controlPoint2 = CGPoint(
+                        x: currentPoint.x - (nextPoint.x - previousPoint.x) * 0.15,
+                        y: currentPoint.y - (nextPoint.y - previousPoint.y) * 0.15
+                    )
                 }
+                
+                // Add cubic curve
+                path.addCurve(
+                    to: currentPoint,
+                    control1: controlPoint1,
+                    control2: controlPoint2
+                )
             }
             
             // Close the path at bottom right
@@ -192,10 +299,18 @@ struct ChartView: View {
                     .onChanged { value in
                         let width = geometry.size.width
                         let stepX = width / CGFloat(data.count - 1)
-                        let index = Int(round(value.location.x / stepX))
+                        let newIndex = Int(round(value.location.x / stepX))
                         
-                        if index >= 0 && index < data.count {
-                            selectedIndex = index
+                        if newIndex >= 0 && newIndex < data.count {
+                            // Only trigger haptic feedback if we've moved to a different point
+                            if selectedIndex != newIndex {
+                                selectedIndex = newIndex
+                                
+                                // Add subtle haptic feedback
+                                let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                                impactFeedback.prepare()
+                                impactFeedback.impactOccurred()
+                            }
                         }
                         dragLocation = value.location
                     }
@@ -218,152 +333,6 @@ struct ChartView: View {
     }
 }
 
-struct ChartDataPoint {
-    let value: Double
-    let date: Date
-    
-    var dateString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd MMM"
-        return formatter.string(from: date)
-    }
-}
-
-// Mock data for demonstration
-extension ChartDataPoint {
-    static let mockData: [ChartDataPoint] = [
-        ChartDataPoint(value: 125340, date: Calendar.current.date(byAdding: .day, value: -29, to: Date()) ?? Date()),
-        ChartDataPoint(value: 128200, date: Calendar.current.date(byAdding: .day, value: -28, to: Date()) ?? Date()),
-        ChartDataPoint(value: 131900, date: Calendar.current.date(byAdding: .day, value: -27, to: Date()) ?? Date()),
-        ChartDataPoint(value: 129500, date: Calendar.current.date(byAdding: .day, value: -26, to: Date()) ?? Date()),
-        ChartDataPoint(value: 133200, date: Calendar.current.date(byAdding: .day, value: -25, to: Date()) ?? Date()),
-        ChartDataPoint(value: 130800, date: Calendar.current.date(byAdding: .day, value: -24, to: Date()) ?? Date()),
-        ChartDataPoint(value: 135600, date: Calendar.current.date(byAdding: .day, value: -23, to: Date()) ?? Date()),
-        ChartDataPoint(value: 132400, date: Calendar.current.date(byAdding: .day, value: -22, to: Date()) ?? Date()),
-        ChartDataPoint(value: 138900, date: Calendar.current.date(byAdding: .day, value: -21, to: Date()) ?? Date()),
-        ChartDataPoint(value: 141200, date: Calendar.current.date(byAdding: .day, value: -20, to: Date()) ?? Date()),
-        ChartDataPoint(value: 139800, date: Calendar.current.date(byAdding: .day, value: -19, to: Date()) ?? Date()),
-        ChartDataPoint(value: 143500, date: Calendar.current.date(byAdding: .day, value: -18, to: Date()) ?? Date()),
-        ChartDataPoint(value: 137200, date: Calendar.current.date(byAdding: .day, value: -17, to: Date()) ?? Date()),
-        ChartDataPoint(value: 140600, date: Calendar.current.date(byAdding: .day, value: -16, to: Date()) ?? Date()),
-        ChartDataPoint(value: 145800, date: Calendar.current.date(byAdding: .day, value: -15, to: Date()) ?? Date()),
-        ChartDataPoint(value: 142300, date: Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()),
-        ChartDataPoint(value: 148200, date: Calendar.current.date(byAdding: .day, value: -13, to: Date()) ?? Date()),
-        ChartDataPoint(value: 151600, date: Calendar.current.date(byAdding: .day, value: -12, to: Date()) ?? Date()),
-        ChartDataPoint(value: 149800, date: Calendar.current.date(byAdding: .day, value: -11, to: Date()) ?? Date()),
-        ChartDataPoint(value: 153400, date: Calendar.current.date(byAdding: .day, value: -10, to: Date()) ?? Date()),
-        ChartDataPoint(value: 147900, date: Calendar.current.date(byAdding: .day, value: -9, to: Date()) ?? Date()),
-        ChartDataPoint(value: 150200, date: Calendar.current.date(byAdding: .day, value: -8, to: Date()) ?? Date()),
-        ChartDataPoint(value: 146800, date: Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()),
-        ChartDataPoint(value: 142340, date: Calendar.current.date(byAdding: .day, value: -6, to: Date()) ?? Date()),
-        ChartDataPoint(value: 145200, date: Calendar.current.date(byAdding: .day, value: -5, to: Date()) ?? Date()),
-        ChartDataPoint(value: 138900, date: Calendar.current.date(byAdding: .day, value: -4, to: Date()) ?? Date()),
-        ChartDataPoint(value: 151200, date: Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date()),
-        ChartDataPoint(value: 148500, date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date()),
-        ChartDataPoint(value: 155800, date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date()),
-        ChartDataPoint(value: 157342, date: Date())
-    ]
-}
-
-//extension ChartDataPoint {
-//    static let mockData: [ChartDataPoint] = [
-//        // Days -89 to -60 (30 days) - Early growth phase
-//        ChartDataPoint(value: 87340, date: Calendar.current.date(byAdding: .day, value: -89, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 89200, date: Calendar.current.date(byAdding: .day, value: -88, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 88600, date: Calendar.current.date(byAdding: .day, value: -87, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 90800, date: Calendar.current.date(byAdding: .day, value: -86, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 92400, date: Calendar.current.date(byAdding: .day, value: -85, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 91200, date: Calendar.current.date(byAdding: .day, value: -84, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 93800, date: Calendar.current.date(byAdding: .day, value: -83, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 95600, date: Calendar.current.date(byAdding: .day, value: -82, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 94900, date: Calendar.current.date(byAdding: .day, value: -81, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 97200, date: Calendar.current.date(byAdding: .day, value: -80, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 96800, date: Calendar.current.date(byAdding: .day, value: -79, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 98400, date: Calendar.current.date(byAdding: .day, value: -78, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 100200, date: Calendar.current.date(byAdding: .day, value: -77, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 99600, date: Calendar.current.date(byAdding: .day, value: -76, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 101800, date: Calendar.current.date(byAdding: .day, value: -75, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 103400, date: Calendar.current.date(byAdding: .day, value: -74, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 102900, date: Calendar.current.date(byAdding: .day, value: -73, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 104600, date: Calendar.current.date(byAdding: .day, value: -72, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 106200, date: Calendar.current.date(byAdding: .day, value: -71, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 105800, date: Calendar.current.date(byAdding: .day, value: -70, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 107400, date: Calendar.current.date(byAdding: .day, value: -69, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 109100, date: Calendar.current.date(byAdding: .day, value: -68, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 108600, date: Calendar.current.date(byAdding: .day, value: -67, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 110800, date: Calendar.current.date(byAdding: .day, value: -66, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 112300, date: Calendar.current.date(byAdding: .day, value: -65, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 111900, date: Calendar.current.date(byAdding: .day, value: -64, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 113600, date: Calendar.current.date(byAdding: .day, value: -63, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 115200, date: Calendar.current.date(byAdding: .day, value: -62, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 114800, date: Calendar.current.date(byAdding: .day, value: -61, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 116400, date: Calendar.current.date(byAdding: .day, value: -60, to: Date()) ?? Date()),
-//        
-//        // Days -59 to -30 (30 days) - Consolidation phase
-//        ChartDataPoint(value: 118100, date: Calendar.current.date(byAdding: .day, value: -59, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 117600, date: Calendar.current.date(byAdding: .day, value: -58, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 119300, date: Calendar.current.date(byAdding: .day, value: -57, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 121000, date: Calendar.current.date(byAdding: .day, value: -56, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 120400, date: Calendar.current.date(byAdding: .day, value: -55, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 122200, date: Calendar.current.date(byAdding: .day, value: -54, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 121800, date: Calendar.current.date(byAdding: .day, value: -53, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 123500, date: Calendar.current.date(byAdding: .day, value: -52, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 122900, date: Calendar.current.date(byAdding: .day, value: -51, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 124600, date: Calendar.current.date(byAdding: .day, value: -50, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 126300, date: Calendar.current.date(byAdding: .day, value: -49, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 125800, date: Calendar.current.date(byAdding: .day, value: -48, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 127400, date: Calendar.current.date(byAdding: .day, value: -47, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 126900, date: Calendar.current.date(byAdding: .day, value: -46, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 128600, date: Calendar.current.date(byAdding: .day, value: -45, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 130200, date: Calendar.current.date(byAdding: .day, value: -44, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 129700, date: Calendar.current.date(byAdding: .day, value: -43, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 131400, date: Calendar.current.date(byAdding: .day, value: -42, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 130900, date: Calendar.current.date(byAdding: .day, value: -41, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 132600, date: Calendar.current.date(byAdding: .day, value: -40, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 131800, date: Calendar.current.date(byAdding: .day, value: -39, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 133500, date: Calendar.current.date(byAdding: .day, value: -38, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 135100, date: Calendar.current.date(byAdding: .day, value: -37, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 134600, date: Calendar.current.date(byAdding: .day, value: -36, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 136300, date: Calendar.current.date(byAdding: .day, value: -35, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 135800, date: Calendar.current.date(byAdding: .day, value: -34, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 137400, date: Calendar.current.date(byAdding: .day, value: -33, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 136900, date: Calendar.current.date(byAdding: .day, value: -32, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 138600, date: Calendar.current.date(byAdding: .day, value: -31, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 140200, date: Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date()),
-//        
-//        // Days -29 to 0 (30 days) - Recent acceleration phase
-//        ChartDataPoint(value: 125340, date: Calendar.current.date(byAdding: .day, value: -29, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 128200, date: Calendar.current.date(byAdding: .day, value: -28, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 131900, date: Calendar.current.date(byAdding: .day, value: -27, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 129500, date: Calendar.current.date(byAdding: .day, value: -26, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 133200, date: Calendar.current.date(byAdding: .day, value: -25, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 130800, date: Calendar.current.date(byAdding: .day, value: -24, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 135600, date: Calendar.current.date(byAdding: .day, value: -23, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 132400, date: Calendar.current.date(byAdding: .day, value: -22, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 138900, date: Calendar.current.date(byAdding: .day, value: -21, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 141200, date: Calendar.current.date(byAdding: .day, value: -20, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 139800, date: Calendar.current.date(byAdding: .day, value: -19, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 143500, date: Calendar.current.date(byAdding: .day, value: -18, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 137200, date: Calendar.current.date(byAdding: .day, value: -17, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 140600, date: Calendar.current.date(byAdding: .day, value: -16, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 145800, date: Calendar.current.date(byAdding: .day, value: -15, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 142300, date: Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 148200, date: Calendar.current.date(byAdding: .day, value: -13, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 151600, date: Calendar.current.date(byAdding: .day, value: -12, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 149800, date: Calendar.current.date(byAdding: .day, value: -11, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 153400, date: Calendar.current.date(byAdding: .day, value: -10, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 147900, date: Calendar.current.date(byAdding: .day, value: -9, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 150200, date: Calendar.current.date(byAdding: .day, value: -8, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 146800, date: Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 142340, date: Calendar.current.date(byAdding: .day, value: -6, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 145200, date: Calendar.current.date(byAdding: .day, value: -5, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 138900, date: Calendar.current.date(byAdding: .day, value: -4, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 151200, date: Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 148500, date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 155800, date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date()),
-//        ChartDataPoint(value: 157342, date: Date())
-//    ]
-//}
 #Preview {
     ZStack {
         Color.black.ignoresSafeArea()

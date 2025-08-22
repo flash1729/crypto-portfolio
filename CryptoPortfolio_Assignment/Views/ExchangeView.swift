@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ExchangeView: View {
+    @State private var showExchangeDetail = false
+    
     var body: some View {
         ZStack {
             // Pure black background
@@ -26,6 +28,9 @@ struct ExchangeView: View {
                 }
             }
             .scrollIndicators(.hidden)
+        }
+        .fullScreenCover(isPresented: $showExchangeDetail) {
+            ExchangeDetailView()
         }
     }
     
@@ -46,7 +51,7 @@ struct ExchangeView: View {
             }
         }
         .padding(.horizontal, 32)
-        .padding(.top, 44) // Same as PortfolioView - account for status bar
+        .padding(.top, 54) // Same as PortfolioView - account for status bar
     }
     
     private var mainContentSection: some View {
@@ -75,7 +80,7 @@ struct ExchangeView: View {
                             .rotationEffect(.degrees(90))
                             .clipped()
                             .clipShape(RoundedRectangle(cornerRadius: 24))
-                            .offset(y: 0) // Keep at original position
+                            .offset(y: 0)
                     }
                 }
                 
@@ -154,7 +159,9 @@ struct ExchangeView: View {
                 }
                 
                 // Plus button - gradient border on top
-                Button(action: {}) {
+                Button(action: {
+                    showExchangeDetail = true
+                }) {
                     Image(systemName: "plus")
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(.white)
@@ -314,7 +321,7 @@ struct ExchangeView: View {
                 )
             }
         }
-        .padding(.top, 32)
+        .padding(.top, 16)
     }
     
     private func transactionRow(icon: String, title: String, date: String, currency: String, amount: String) -> some View {

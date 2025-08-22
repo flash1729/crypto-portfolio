@@ -69,7 +69,7 @@ struct PortfolioView: View {
                     }
                 }
                 .padding(.horizontal, 16) // Increased horizontal padding to match design
-                .padding(.top, 44) // Account for status bar
+                .padding(.top, 54) // Account for status bar
                 
                 Spacer()
                 
@@ -138,14 +138,16 @@ struct PortfolioView: View {
         VStack(spacing: 16) {
             // Time period selector
             HStack(spacing: 12) {
-                ForEach(["1h", "8h", "1d", "1w", "1m", "6m", "1y"], id: \.self) { period in
-                    Button(action: {}) {
-                        Text(period)
+                ForEach(ChartTimeframe.allCases, id: \.self) { timeframe in
+                    Button(action: {
+                        viewModel.selectTimeframe(timeframe)
+                    }) {
+                        Text(timeframe.rawValue)
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(period == "6m" ? .white : .gray)
+                            .foregroundColor(timeframe == viewModel.selectedTimeframe ? .white : .gray)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                            .background(period == "6m" ? Color.gray.opacity(0.3) : Color.clear)
+                            .background(timeframe == viewModel.selectedTimeframe ? Color.gray.opacity(0.3) : Color.clear)
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
                 }
@@ -153,7 +155,7 @@ struct PortfolioView: View {
             .padding(.horizontal, 16)
             
             // Chart area
-            ChartView(data: ChartDataPoint.mockData, currency: viewModel.selectedCurrency)
+            ChartView(data: viewModel.filteredChartData, currency: viewModel.selectedCurrency)
                 .padding(.horizontal, 16)
         }
         .padding(.top, 16)

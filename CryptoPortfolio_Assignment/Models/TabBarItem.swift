@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum TabBarItem: String, CaseIterable, Hashable {
+enum TabBarItem: String, CaseIterable, Hashable, Equatable {
     case analytics = "Analytics"
     case exchange = "Exchange"
     case record = "Record"

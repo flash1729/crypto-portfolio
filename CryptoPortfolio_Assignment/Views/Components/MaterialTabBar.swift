@@ -46,7 +46,7 @@ struct MaterialTabBar: View {
                             )
                         )
                 }
-                .frame(height: 180) // Your desired height
+                .frame(height: 200) // Your desired height
             }
             .ignoresSafeArea(.all, edges: .bottom) // This makes it extend to actual bottom
             .allowsHitTesting(false)
