@@ -35,7 +35,7 @@ A beautiful and modern cryptocurrency portfolio tracking app built with **SwiftU
 
 3. **Select Target Device**
    - Choose your target device or simulator from the scheme selector
-   - For best experience, use iPhone 15 Pro or similar
+   - For best experience, use iPhone 16 Pro
 
 4. **Build and Run**
    - Press `Cmd + R` or click the "Play" button
