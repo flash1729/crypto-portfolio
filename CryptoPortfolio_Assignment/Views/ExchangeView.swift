@@ -95,13 +95,13 @@ struct ExchangeView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                     
                     // Main value
-                    Text("1,57,342.05")
+                    Text(157342.05.formattedAsIndianCurrency(includeSymbol: false))
                         .font(.system(size: 36, weight: .medium))
                         .foregroundColor(.white)
                     
                     // Change indicators
                     HStack(spacing: 16) {
-                        Text("₹ 1,342")
+                        Text(1342.0.formattedAsIndianCurrency())
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.white.opacity(0.8))
                         
@@ -119,7 +119,7 @@ struct ExchangeView: View {
                 // Up arrow button - gradient border on left side
                 GradientActionButton(
                     iconName: "arrow.up",
-                    action: {},
+                    action: { showExchangeDetail = true },
                     gradientPosition: .left
                 )
                 
@@ -133,7 +133,7 @@ struct ExchangeView: View {
                 // Down arrow button - gradient border on right side
                 GradientActionButton(
                     iconName: "arrow.down",
-                    action: {},
+                    action: { showExchangeDetail = true },
                     gradientPosition: .right
                 )
             }

@@ -71,7 +71,7 @@ struct SimpleChartView: View {
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(Color(red: 225/255, green: 225/255, blue: 225/255, opacity: 0.4))
                     
-                    Text("₹ 1,42,340")
+                    Text(142340.0.formattedAsIndianCurrency())
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(Color(red: 225/255, green: 225/255, blue: 225/255, opacity: 0.8))
                 }

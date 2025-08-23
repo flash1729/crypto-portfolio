@@ -417,7 +417,7 @@ struct ChartView: View {
     private func formatValue(_ value: Double) -> String {
         switch currency {
         case .inr:
-            return "₹ \(String(format: "%.0f", value))"
+            return value.formattedAsIndianCurrency(includeSymbol: true, decimalPlaces: 0)
         case .btc:
             // Convert INR to BTC using approximate rate
             let btcValue = value / 7562502.14 // Using BTC price from mock data

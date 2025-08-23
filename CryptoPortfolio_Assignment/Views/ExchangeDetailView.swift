@@ -10,7 +10,7 @@ import SwiftUI
 struct ExchangeDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var ethAmount: String = "2.640"
-    @State private var inrAmount: String = "4,65,006.44"
+    @State private var inrAmount: Double = 465006.44
     @State private var isETHToINR: Bool = true // Track current exchange direction
     
     var body: some View {
@@ -44,8 +44,8 @@ struct ExchangeDetailView: View {
                                 logoImage: isETHToINR ? "ether" : nil,
                                 currencyCode: isETHToINR ? "ETH" : "INR",
                                 actionText: isETHToINR ? "Send" : "Receive",
-                                amount: isETHToINR ? ethAmount : "₹ \(inrAmount)",
-                                balance: isETHToINR ? "10.254" : "4,35,804"
+                                amount: isETHToINR ? ethAmount : inrAmount.formattedAsIndianCurrency(),
+                                balance: isETHToINR ? "10.254" : 435804.0.formattedAsIndianCurrency(includeSymbol: false)
                             )
                             
                             // INR Card (Receive)
@@ -53,8 +53,8 @@ struct ExchangeDetailView: View {
                                 logoImage: isETHToINR ? nil : "ether",
                                 currencyCode: isETHToINR ? "INR" : "ETH",
                                 actionText: isETHToINR ? "Receive" : "Send",
-                                amount: isETHToINR ? "₹ \(inrAmount)" : ethAmount,
-                                balance: isETHToINR ? "4,35,804" : "10.254"
+                                amount: isETHToINR ? inrAmount.formattedAsIndianCurrency() : ethAmount,
+                                balance: isETHToINR ? 435804.0.formattedAsIndianCurrency(includeSymbol: false) : "10.254"
                             )
                         }
                         
@@ -162,7 +162,7 @@ struct ExchangeDetailView: View {
                 
                 Spacer()
                 
-                Text(isETHToINR ? "1 ETH = ₹ 1,76,138.80" : "1 INR = 0.0000057 ETH")
+                Text(isETHToINR ? "1 ETH = \(176138.80.formattedAsIndianCurrency())" : "1 INR = 0.0000057 ETH")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white.opacity(0.8))
             }
@@ -192,7 +192,7 @@ struct ExchangeDetailView: View {
                 
                 Spacer()
                 
-                Text("₹ 422.73")
+                Text(422.73.formattedAsIndianCurrency())
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white.opacity(0.8))
             }
@@ -207,7 +207,7 @@ struct ExchangeDetailView: View {
                 
                 Spacer()
                 
-                Text(isETHToINR ? "₹ 1,75,716.07" : "0.002635 ETH")
+                Text(isETHToINR ? 175716.07.formattedAsIndianCurrency() : "0.002635 ETH")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.white)
             }

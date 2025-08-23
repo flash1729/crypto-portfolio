@@ -13,7 +13,7 @@ struct Portfolio: Codable {
     let totalChangePercentage: Double
     
     var formattedTotalValue: String {
-        return "₹ \(String(format: "%.2f", totalValue))"
+        return totalValue.formattedAsIndianCurrency(includeSymbol: true, decimalPlaces: 2)
     }
     
     var formattedTotalChange: String {

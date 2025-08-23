@@ -97,23 +97,3 @@ struct CryptoAssetCard: View {
         )
     }
 }
-
-#Preview {
-    HStack(spacing: 24) {
-        CryptoAssetCard(
-            imageName: "btcVec",
-            title: "Bitcoin (BTC)",
-            price: "₹ 75,62,502.14",
-            changePercentage: "+3.2%"
-        )
-        
-        CryptoAssetCard(
-            imageName: nil,
-            title: "Cardano (ADA)",
-            price: "₹ 45,234.67",
-            changePercentage: "+1.8%"
-        )
-    }
-    .background(Color.black)
-    .padding()
-}

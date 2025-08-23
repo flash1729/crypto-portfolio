@@ -134,7 +134,7 @@ struct PortfolioView: View {
                 CryptoAssetCard(
                     imageName: "btcVec",
                     title: "Bitcoin (BTC)",
-                    price: "₹ 75,62,502.14",
+                    price: 7562502.14.formattedAsIndianCurrency(),
                     changePercentage: "+3.2%"
                 )
                 
@@ -142,7 +142,7 @@ struct PortfolioView: View {
                 CryptoAssetCard(
                     imageName: "ether",
                     title: "Ether (ETH)",
-                    price: "₹ 1,79,102.50",
+                    price: 179102.50.formattedAsIndianCurrency(),
                     changePercentage: "+3.2%"
                 )
                 
@@ -150,7 +150,7 @@ struct PortfolioView: View {
                 CryptoAssetCard(
                     imageName: nil,
                     title: "Cardano (ADA)",
-                    price: "₹ 45,234.67",
+                    price: 45234.67.formattedAsIndianCurrency(),
                     changePercentage: "+1.8%"
                 )
             }

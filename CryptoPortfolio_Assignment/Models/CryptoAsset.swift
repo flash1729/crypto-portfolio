@@ -17,7 +17,7 @@ struct CryptoAsset: Identifiable, Codable {
     let imageURL: String?
     
     var formattedPrice: String {
-        return "₹ \(String(format: "%.2f", price))"
+        return price.formattedAsIndianCurrency(includeSymbol: true, decimalPlaces: 2)
     }
     
     var formattedPriceChange: String {
