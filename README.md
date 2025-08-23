@@ -11,13 +11,6 @@ A beautiful and modern cryptocurrency portfolio tracking app built with **SwiftU
 
 *More screenshots coming soon...*
 
-## 🎥 Demo Video
-
-<!-- Add your demo video here -->
-[![Demo Video](images/demo-thumbnail.png)](videos/app-demo.mp4)
-
-*Click to watch the app demo*
-
 ## ✨ Features
 
 ### 📊 Portfolio Management
