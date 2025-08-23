@@ -11,6 +11,45 @@ A beautiful and modern cryptocurrency portfolio tracking app built with **SwiftU
 
 *More screenshots coming soon...*
 
+## 🚀 Quick Setup
+
+### Prerequisites
+- **Xcode 15.0+** (recommended)
+- **iOS 17.0+** deployment target
+- **macOS 14.0+** for development
+
+### Installation Steps
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/yourusername/crypto-portfolio-app.git
+   cd crypto-portfolio-app
+   ```
+
+2. **Open in Xcode**
+   ```bash
+   open CryptoPortfolio_Assignment.xcodeproj
+   ```
+   
+   Or simply double-click the `.xcodeproj` file in Finder.
+
+3. **Select Target Device**
+   - Choose your target device or simulator from the scheme selector
+   - For best experience, use iPhone 15 Pro or similar
+
+4. **Build and Run**
+   - Press `Cmd + R` or click the "Play" button
+   - The app will automatically build and launch on your selected device
+
+5. **Enjoy!** 🎉
+   - The app comes with pre-populated mock data
+   - No additional setup or API keys required
+
+### 📱 Device Compatibility
+- **iPhone**: iOS 17.0+ (iPhone 12 and newer recommended)
+- **iPad**: iPadOS 17.0+ (adaptive layout coming soon)
+- **Simulator**: Any iOS 17.0+ simulator
+
 ## ✨ Features
 
 ### 📊 Portfolio Management
@@ -89,45 +128,6 @@ CryptoPortfolio_Assignment/
 - **State Management**: Proper data flow with @State and @ObservedObject
 - **Dependency Injection**: Flexible service layer
 - **Protocol-Oriented Programming**: Extensible and testable code
-
-## 🚀 Quick Setup
-
-### Prerequisites
-- **Xcode 15.0+** (recommended)
-- **iOS 17.0+** deployment target
-- **macOS 14.0+** for development
-
-### Installation Steps
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/yourusername/crypto-portfolio-app.git
-   cd crypto-portfolio-app
-   ```
-
-2. **Open in Xcode**
-   ```bash
-   open CryptoPortfolio_Assignment.xcodeproj
-   ```
-   
-   Or simply double-click the `.xcodeproj` file in Finder.
-
-3. **Select Target Device**
-   - Choose your target device or simulator from the scheme selector
-   - For best experience, use iPhone 15 Pro or similar
-
-4. **Build and Run**
-   - Press `Cmd + R` or click the "Play" button
-   - The app will automatically build and launch on your selected device
-
-5. **Enjoy!** 🎉
-   - The app comes with pre-populated mock data
-   - No additional setup or API keys required
-
-### 📱 Device Compatibility
-- **iPhone**: iOS 17.0+ (iPhone 12 and newer recommended)
-- **iPad**: iPadOS 17.0+ (adaptive layout coming soon)
-- **Simulator**: Any iOS 17.0+ simulator
 
 ## 🏦 Sample Data
 
